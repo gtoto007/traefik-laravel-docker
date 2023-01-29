@@ -1,0 +1,38 @@
+version: "3.3"
+networks:
+  my-network:
+    external: true
+
+services:
+  traefik:
+    image: "traefik:v2.9"
+    container_name: "traefik"
+    networks:
+      - my-network
+    command:
+      - "--api"
+      - "--providers.docker.exposedbydefault=false"
+      - "--api.insecure=true"
+      - "--accesslog.filepath=/data/access.log"
+      # entrypoints
+      - "--entrypoints.http.address=:80"
+      - "--entrypoints.https.address=:443"
+      - "--entrypoints.traefik.address=:8888"
+      # certificatesresolvers
+#      - "--certificatesresolvers.letsencrypt.acme.email=test@test.com"
+#      - "--certificatesresolvers.letsencrypt.acme.storage=/data/acme.json"
+#      - "--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=http"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8888:8888"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik.rule=Host(`traefik.laravel.test`)"
+      - "traefik.http.routers.traefik.entrypoints=traefik"
+#      - "traefik.http.routers.traefik.service=api@internal"
+#     - "traefik.http.routers.traefik.tls.certresolver=letsencrypt"
+#      - "traefik.http.middlewares.access-auth.basicauth.realm=Login Required"
+#      - "traefik.http.middlewares.access-auth.basicauth.users='admin:$2y$10$lXaL3lj6raFic6rFqr2.lOBoCudAIhB6zyoqObNg290UFppiUzTTi'"

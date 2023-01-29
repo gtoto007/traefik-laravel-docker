@@ -1,0 +1,49 @@
+version: '3.8'
+
+networks:
+  my-network:
+    external: true
+
+services:
+  nginx:
+    build:
+      dockerfile: docker/nginx/Dockerfile
+      context: ./
+    image: my-nginx
+#    ports:
+#      - "80:80"
+    volumes:
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d/
+      - my-data_project2:/var/www
+    networks:
+      - my-network
+    depends_on:
+      - php-fpm
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.project2.rule=Host(`project2.laravel.test`)"
+      - "traefik.docker.network=my-network"
+  php-fpm:
+    build:
+      dockerfile: docker/php/Dockerfile
+      context: ./
+    image: my-php-fpm
+    ports:
+      - "5174:5173"
+    volumes:
+      - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+      - my-data_project2:/var/www
+    networks:
+      - my-network
+  project2:
+    build:
+      dockerfile: docker/project2/Dockerfile
+      context: ./
+    image: project2:1.0
+    volumes:
+      - my-data_project2:/var/www
+    networks:
+      - my-network
+  #      - ./:/var/www
+volumes:
+  my-data_project2:
