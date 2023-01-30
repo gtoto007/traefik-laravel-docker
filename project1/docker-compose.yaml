@@ -6,6 +6,7 @@ networks:
 
 services:
   nginx:
+    hostname: project1-nginx
     build:
       dockerfile: docker/nginx/Dockerfile
       context: ./
@@ -22,8 +23,8 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.project1.rule=Host(`project1.laravel.test`)"
-      - "traefik.docker.network=my-network"
   php-fpm:
+    hostname: project1-php
     build:
       dockerfile: docker/php/Dockerfile
       context: ./

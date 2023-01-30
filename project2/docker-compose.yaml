@@ -6,12 +6,13 @@ networks:
 
 services:
   nginx:
+    hostname: project2-nginx
     build:
       dockerfile: docker/nginx/Dockerfile
       context: ./
     image: my-nginx
-#    ports:
-#      - "80:80"
+    #    ports:
+    #      - "80:80"
     volumes:
       - ./docker/nginx/conf.d:/etc/nginx/conf.d/
       - my-data_project2:/var/www
@@ -22,8 +23,8 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.project2.rule=Host(`project2.laravel.test`)"
-      - "traefik.docker.network=my-network"
   php-fpm:
+    hostname: project2-php
     build:
       dockerfile: docker/php/Dockerfile
       context: ./
